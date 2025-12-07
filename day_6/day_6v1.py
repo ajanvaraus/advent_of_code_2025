@@ -1,55 +1,54 @@
 # PART 1
 
-# global file r
-r = open("read.txt")
-
 #file handler
 def handler() :
-    # send updated file for a new round until everything has been read
-
-    # input to read file
-    x = open("read.txt", "w")
+    data = []
     for i in open("input.txt") :
-        x.write(i)
-    x.close()
+        data.append(i)
 
     result = 0
     stop = False
     
     while (not stop) :
+        # getting the data into a variable
+        piece = []
+        for i in range(len(data)) :
+            part, space, line = data[i].partition(" ")
+            data[i] = line.strip()
+            piece.append(part)
+
         # call for column handler
-        op, temp, stop = looper()
+        op, temp, = looper(piece)
         result += temp
 
-        # update files
-        r = open("read.txt", "a")
-        w = open("write.txt")
-        for i in w :
-            r.write(i)
-        w.close()
-        w = open("write.txt", "w")
-        w.truncate(0)
-        r.close()
-        r = open("read.txt")
+        # end condition
+        if (data[0] == "") :
+            stop = True
 
     return result
 
-# recursive handler for one column
-# writes trimmed lines into t1
-def looper() :
+# recursive handler for columns
+def looper(data) :
+
     operation = ""
     result = 0
-    stop = False
-    line = r.readline()
-    print(line)
-    # test print
-    if (12 == int(line)) :
-        stop = True
-    # test write
-    x = open("write.txt", "w")
-    x.write(str(int(line)+1))
-    x.close()
-    return [operation, result, stop]
+
+    if (data[0] == "+") :
+        operation = data[0]
+    elif (data[0] == "*") :    
+        operation = data[0]
+        result = 1
+        
+    elif (data[0].isnumeric()):
+        operation, result = looper(data[1:])
+        
+        if (operation == "+") :
+            result += int(data[0])
+        elif (operation == "*") :
+            result = result * int(data[0])
+            print(data[0])
+            print(result)
+    return [operation, result]
 
 def main() :
     # hopefully just function call and result print
